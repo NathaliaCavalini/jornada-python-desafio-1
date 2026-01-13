@@ -14,3 +14,6 @@ pyautogui.press("enter")
 #Segundo passo: fazer login
 pyautogui.write("https://dlp.hashtagtreinamentos.com/python/intensivao/login")
 pyautogui.press("enter")
+
+#Terceiro passo: Fazer o login em sí
+
