@@ -1,69 +1,97 @@
-# Passo a passo do projeto
-# Passo 1: Entrar no sistema da empresa 
-    # https://dlp.hashtagtreinamentos.com/python/intensivao/login
-
 import pyautogui
 import time
-
-# pyautogui.write -> escrever um texto
-# pyautogui.press -> apertar 1 tecla
-# pyautogui.click -> clicar em algum lugar da tela
-# pyautogui.hotkey -> combinação de teclas
-pyautogui.PAUSE = 0.3
-
-# abrir o navegador (chrome)
-pyautogui.press("win")
-pyautogui.write("firefox")
-pyautogui.press("enter")
-time.sleep(3)
-# entrar no link 
-pyautogui.write("https://dlp.hashtagtreinamentos.com/python/intensivao/login")
-pyautogui.press("enter")
-time.sleep(3)
-
-
-# Passo 2: Fazer login
-# selecionar o campo de email
-pyautogui.click(x=491, y=382)
-# escrever o seu email
-pyautogui.write("pythonimpressionador@gmail.com")
-pyautogui.press("tab") # passando pro próximo campo
-pyautogui.write("sua senha")
-pyautogui.click(x=689, y=536)
-time.sleep(3)
-
-# Passo 3: Importar a base de produtos pra cadastrar
 import pandas as pd
 
-tabela = pd.read_csv("produtos.csv")
+# Configurações iniciais - mais lento = mais confiável
+pyautogui.PAUSE = 0.8          # Aumentei pra dar tempo do navegador reagir
+pyautogui.FAILSAFE = True      # Mova mouse pro canto superior esquerdo pra parar o script
 
-print(tabela)
-# Passo 4: Cadastrar um produto
+# ================================================
+# Passo 1 - Abrir navegador e entrar no site
+# ================================================
+pyautogui.press("win")
+time.sleep(0.8)
+pyautogui.write("firefox")
+pyautogui.press("enter")
+time.sleep(4)  # firefox pode demorar pra abrir
+
+pyautogui.write("https://dlp.hashtagtreinamentos.com/python/intensivao/login")
+pyautogui.press("enter")
+time.sleep(5)  # tempo pra carregar a página de login
+
+# Garantir foco na janela (clica no meio da tela)
+screen_width, screen_height = pyautogui.size()
+pyautogui.click(screen_width // 2, screen_height // 2)
+time.sleep(0.8)
+
+# ================================================
+# Passo 2 - Fazer login
+# ================================================
+pyautogui.click(x=491, y=382)          # campo email
+pyautogui.write("pythonimpressionador@gmail.com")
+pyautogui.press("tab")
+
+pyautogui.write("sua senha")           # ← COLOQUE A SENHA REAL AQUI!
+
+pyautogui.click(x=689, y=536)          # botão entrar
+time.sleep(8)  # Aumentado! A página de cadastro demora mesmo pra carregar tudo
+
+# Garantir foco novamente após login
+pyautogui.click(screen_width // 2, screen_height // 2)
+time.sleep(1)
+
+# ================================================
+# Passo 3 - Carregar tabela
+# ================================================
+tabela = pd.read_csv("produtos.csv")
+print(tabela)  # debug, pode remover depois
+
+# ================================================
+# Passo 4 - Cadastrar produtos (parte corrigida)
+# ================================================
 for linha in tabela.index:
-    # clicar no campo de código
-    pyautogui.click(x=487, y=300)
-    # pegar da tabela o valor do campo que a gente quer preencher
-    codigo = tabela.loc[linha, "codigo"]
-    # preencher o campo
-    pyautogui.write(str(codigo))
-    # passar para o proximo campo
+    print(f"Cadastrando {linha + 1}/{len(tabela)} → Código: {tabela.loc[linha, 'codigo']}")
+    
+    # Clique forçado com moveTo + click separado
+    pyautogui.moveTo(415, 257, duration=0.3)
+    time.sleep(0.2)
+    pyautogui.click()
+    
+    time.sleep(0.8)  # pausa antes de digitar
+    
+    pyautogui.write(str(tabela.loc[linha, "codigo"]))
     pyautogui.press("tab")
-    # preencher o campo
+    time.sleep(0.2)
+    
     pyautogui.write(str(tabela.loc[linha, "marca"]))
     pyautogui.press("tab")
+    time.sleep(0.2)
+    
     pyautogui.write(str(tabela.loc[linha, "tipo"]))
     pyautogui.press("tab")
+    time.sleep(0.2)
+    
     pyautogui.write(str(tabela.loc[linha, "categoria"]))
     pyautogui.press("tab")
+    time.sleep(0.2)
+    
     pyautogui.write(str(tabela.loc[linha, "preco_unitario"]))
     pyautogui.press("tab")
+    time.sleep(0.2)
+    
     pyautogui.write(str(tabela.loc[linha, "custo"]))
     pyautogui.press("tab")
+    time.sleep(0.2)
+    
     obs = tabela.loc[linha, "obs"]
     if not pd.isna(obs):
-        pyautogui.write(str(tabela.loc[linha, "obs"]))
+        pyautogui.write(str(obs))
+    
     pyautogui.press("tab")
-    pyautogui.press("enter") # cadastra o produto (botao enviar)
-    # dar scroll de tudo pra cima
+    time.sleep(0.3)
+    pyautogui.press("enter")
+    
+    time.sleep(2.5)  # espera mais o cadastro salvar
+    
     pyautogui.scroll(5000)
-    # Passo 5: Repetir o processo de cadastro até o fim
+    time.sleep(1.0)
