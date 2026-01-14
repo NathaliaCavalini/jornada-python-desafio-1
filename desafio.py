@@ -24,3 +24,12 @@ pyautogui.write("sua senha")
 pyautogui.press("tab")
 pyautogui.press("enter")
 time.sleep(3)
+
+#Quarto passo: Cadastrar produtos
+import pandas
+
+tabela = pandas.read_csv("produtos.csv")
+
+time.sleep(3)
+pyautogui.click(x=519,y=256) 
+pyautogui.write("produto")
